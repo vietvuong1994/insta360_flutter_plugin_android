@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.meey.insta.insta">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application tools:node="replace"
+        tools:replace="android:name"
+        android:name=".InstaPlugin">
+        <activity
+            android:name=".activity.TestActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.BleActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.FullDemoActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PreviewActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.Preview2Activity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.Preview3Activity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.LiveActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CaptureActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OscActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CameraFilesActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PlayAndExportActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MoreSettingActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.StitchActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.FwUpgradeActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>
