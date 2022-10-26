@@ -26,4 +26,52 @@ abstract class InstaPlatform extends PlatformInterface {
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
+
+  Future<String?> getFullDemo() {
+    throw UnimplementedError('getFullDemo() has not been implemented.');
+  }
+
+  Future<String?> connectByWifi() {
+    throw UnimplementedError('connectByWifi() has not been implemented.');
+  }
+
+  Future<String?> connectByUsb() {
+    throw UnimplementedError('connectByUsb() has not been implemented.');
+  }
+
+  Future<String?> connectByBle() {
+    throw UnimplementedError('connectByBle() has not been implemented.');
+  }
+
+  Future<String?> closeCamera() {
+    throw UnimplementedError('closeCamera() has not been implemented.');
+  }
+
+  Future<String?> capture() {
+    throw UnimplementedError('capture() has not been implemented.');
+  }
+
+  Future<String?> getPreview() {
+    throw UnimplementedError('getPreview() has not been implemented.');
+  }
+
+  Future<String?> getPreview2() {
+    throw UnimplementedError('getPreview2() has not been implemented.');
+  }
+
+  Future<String?> getPreview3() {
+    throw UnimplementedError('getPreview3() has not been implemented.');
+  }
+
+  Future<String?> getLive() {
+    throw UnimplementedError('getLive() has not been implemented.');
+  }
+
+  Future<String?> getOsc() {
+    throw UnimplementedError('getOsc() has not been implemented.');
+  }
+
+  Future<String?> getSetting() {
+    throw UnimplementedError('getSetting() has not been implemented.');
+  }
 }
