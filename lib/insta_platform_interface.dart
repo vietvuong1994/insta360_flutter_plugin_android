@@ -1,5 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'insta_listener_model.dart';
 import 'insta_method_channel.dart';
 
 abstract class InstaPlatform extends PlatformInterface {
@@ -21,6 +22,10 @@ abstract class InstaPlatform extends PlatformInterface {
   static set instance(InstaPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
+  }
+
+  void listener(InstaListenerModel callbacks) {
+    throw UnimplementedError('listener() has not been implemented.');
   }
 
   Future<String?> getPlatformVersion() {

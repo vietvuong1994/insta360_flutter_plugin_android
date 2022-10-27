@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -27,9 +26,9 @@ import com.meey.insta.insta.activity.Preview2Activity;
 import com.meey.insta.insta.activity.Preview3Activity;
 import com.meey.insta.insta.activity.PreviewActivity;
 import com.meey.insta.insta.activity.StitchActivity;
-import com.meey.insta.insta.activity.TestActivity;
 import com.meey.insta.insta.util.AssetsUtil;
 import com.meey.insta.insta.util.CameraBindNetworkManager;
+import com.meey.insta.insta.util.NetworkManager;
 
 import java.io.File;
 
@@ -40,7 +39,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import  com.arashivision.sdkcamera.camera.callback.ICameraChangedCallback;
 
 public class InstaPlugin extends Application implements FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
@@ -59,17 +57,14 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
     InstaCameraSDK.init(this);
     InstaMediaSDK.init(this);
 
-//    InstaCameraManager.getInstance().registerCameraChangedCallback(this);
+
 //    if (InstaCameraManager.getInstance().getCameraConnectedType() != InstaCameraManager.CONNECT_TYPE_NONE) {
 //      onCameraStatusChanged(true);
 //    }
     super.onCreate();
   }
 
-//  @Override
-//  public void onCameraStatusChanged(boolean enabled) {
-//    Log.e("onCameraStatusChanged","enabled");
-//  }
+
 
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
@@ -82,8 +77,32 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
 
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "insta");
     channel.setMethodCallHandler(this);
-//    context= getApplicationContext();
-    // Init SDK
+
+    ICameraChangedCallback cameraCallback = new CameraChangedCallback(new CameraListenerCallback () {
+      @Override
+      public void onCameraStatusChanged(boolean enabled) {
+        Log.d("Log===", "onCameraStatusChanged");
+        if(!enabled){
+          CameraBindNetworkManager.getInstance().unbindNetwork();
+          NetworkManager.getInstance().clearBindProcess();
+        }
+        channel.invokeMethod("camera_status_change", enabled);
+      }
+
+      @Override
+      public void onCameraConnectError(int errorCode) {
+        Log.d("Log===", "onCameraConnectError" + errorCode + channel);
+        CameraBindNetworkManager.getInstance().unbindNetwork();
+        channel.invokeMethod("camera_connect_error", errorCode);
+      }
+
+      @Override
+      public void onCameraSDCardStateChanged(boolean enabled){
+        Log.d("Log===", "onCameraSDCardStateChanged");
+        channel.invokeMethod("camera_sdcard_state_change", enabled);
+      }
+    });
+    InstaCameraManager.getInstance().registerCameraChangedCallback(cameraCallback);
 
 //    copyHdrSourceFromAssets();
   }
@@ -102,9 +121,9 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
       CameraBindNetworkManager.getInstance().bindNetwork(errorCode -> {
         InstaCameraManager.getInstance().openCamera(InstaCameraManager.CONNECT_TYPE_WIFI);
         if(errorCode == CameraBindNetworkManager.ErrorCode.OK){
-          result.success("SUCCESS");
-        }else{
-          result.error("FAIL","FAIL","FAIL");
+          result.success("Network connection success");
+        } else {
+          result.error("Error", "Network connection failed", "Network connection failed");
         }
       });
     } else if (call.method.equals("connectByUsb")) {

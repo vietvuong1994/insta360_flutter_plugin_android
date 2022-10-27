@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:insta/insta.dart';
+import 'package:insta/insta_listener_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,34 +18,33 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
   bool isCameraConnected = false;
   final _instaPlugin = Insta();
 
   @override
   void initState() {
     super.initState();
-    // initPlatformState();
+    initListener();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion = await _instaPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+  Future<void> initListener() async {
+    InstaListenerModel callbacks = InstaListenerModel(
+      onCameraConnectError: onCameraConnectError,
+      onCameraStatusChanged: onCameraStatusChanged,
+    );
+    _instaPlugin.listener(callbacks);
+  }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+  onCameraConnectError(int errorCode) {
+    EasyLoading.dismiss();
+    EasyLoading.showToast("Camera connect failed $errorCode");
+  }
 
+  onCameraStatusChanged(bool enabled) {
+    EasyLoading.dismiss();
     setState(() {
-      _platformVersion = platformVersion;
+      isCameraConnected = enabled;
     });
   }
 
@@ -54,16 +54,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> connectByWifi() async {
     try {
+      EasyLoading.show();
       await _instaPlugin.connectByWifi();
-      Fluttertoast.showToast(msg: "Camera connect success");
-      setState(() {
-        isCameraConnected = true;
-      });
     } catch (e) {
-      Fluttertoast.showToast(msg: "Camera connect failed");
-      setState(() {
-        isCameraConnected = false;
-      });
+      EasyLoading.dismiss();
+      EasyLoading.showToast("Internet connect failed");
     }
   }
 
@@ -113,6 +108,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: EasyLoading.init(),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
@@ -150,13 +146,13 @@ class _MyAppState extends State<MyApp> {
               ],
             ),
             const Text("Camera Function -- Need to connect camere first"),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("Capture")),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("Preview")),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("Preview 2")),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("Preview 3")),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("Live")),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("OSC")),
-            ElevatedButton(onPressed: isCameraConnected ? () {} : null, child: const Text("Settings")),
+            ElevatedButton(onPressed: isCameraConnected ? capture : null, child: const Text("Capture")),
+            ElevatedButton(onPressed: isCameraConnected ? getPreview : null, child: const Text("Preview")),
+            ElevatedButton(onPressed: isCameraConnected ? getPreview2 : null, child: const Text("Preview 2")),
+            ElevatedButton(onPressed: isCameraConnected ? getPreview3 : null, child: const Text("Preview 3")),
+            ElevatedButton(onPressed: isCameraConnected ? getLive : null, child: const Text("Live")),
+            ElevatedButton(onPressed: isCameraConnected ? getOsc : null, child: const Text("OSC")),
+            ElevatedButton(onPressed: isCameraConnected ? getSetting : null, child: const Text("Settings")),
             const Text("Other"),
             ElevatedButton(onPressed: () {}, child: const Text("Camera file list")),
             ElevatedButton(onPressed: () {}, child: const Text("Play & Export")),

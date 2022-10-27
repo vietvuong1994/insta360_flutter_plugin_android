@@ -1,7 +1,11 @@
-
+import 'insta_listener_model.dart';
 import 'insta_platform_interface.dart';
 
 class Insta {
+  void listener(InstaListenerModel callbacks) {
+    return InstaPlatform.instance.listener(callbacks);
+  }
+
   Future<String?> getPlatformVersion() {
     return InstaPlatform.instance.getPlatformVersion();
   }
@@ -29,7 +33,7 @@ class Insta {
   Future<String?> capture() {
     return InstaPlatform.instance.capture();
   }
-  
+
   Future<String?> getPreview() {
     return InstaPlatform.instance.getPreview();
   }
