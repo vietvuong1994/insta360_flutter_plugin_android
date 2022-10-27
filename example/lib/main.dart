@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:insta/insta.dart';
 import 'package:insta/insta_listener_model.dart';
+import 'package:insta/text_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -105,6 +106,10 @@ class _MyAppState extends State<MyApp> {
     await _instaPlugin.getSetting();
   }
 
+  void _onTextViewCreated(TextViewController controller) {
+    controller.setText('Hello from Android!');
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -158,6 +163,13 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(onPressed: () {}, child: const Text("Play & Export")),
             ElevatedButton(onPressed: () {}, child: const Text("HDR stitching")),
             ElevatedButton(onPressed: () {}, child: const Text("Firmware upgrade")),
+            SizedBox(
+              height: 100,
+              width: double.infinity,
+              child: TextView(
+                onTextViewCreated: _onTextViewCreated,
+              ),
+            ),
           ],
         ),
       ),

@@ -26,6 +26,7 @@ import com.meey.insta.insta.activity.Preview2Activity;
 import com.meey.insta.insta.activity.Preview3Activity;
 import com.meey.insta.insta.activity.PreviewActivity;
 import com.meey.insta.insta.activity.StitchActivity;
+import com.meey.insta.insta.text_view.TextViewFactory;
 import com.meey.insta.insta.util.AssetsUtil;
 import com.meey.insta.insta.util.CameraBindNetworkManager;
 import com.meey.insta.insta.util.NetworkManager;
@@ -76,6 +77,9 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "insta");
+    // Register text view
+    flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.meey.insta/textview", new TextViewFactory(flutterPluginBinding.getBinaryMessenger()));
+
     channel.setMethodCallHandler(this);
 
     ICameraChangedCallback cameraCallback = new CameraChangedCallback(new CameraListenerCallback () {
@@ -153,6 +157,7 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
       result.success("live");
     } else if (call.method.equals("osc")) {
       activity.startActivity(new Intent(activity, OscActivity.class));
+
       result.success("osc");
     } else if (call.method.equals("listCameraFile")) {
       activity.startActivity(new Intent(activity, CameraFilesActivity.class));
@@ -194,6 +199,7 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     activity = binding.getActivity();
+//    binding.getLifecycle()
   }
 
   @Override
