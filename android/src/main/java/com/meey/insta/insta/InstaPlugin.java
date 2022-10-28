@@ -26,6 +26,7 @@ import com.meey.insta.insta.activity.Preview2Activity;
 import com.meey.insta.insta.activity.Preview3Activity;
 import com.meey.insta.insta.activity.PreviewActivity;
 import com.meey.insta.insta.activity.StitchActivity;
+import com.meey.insta.insta.capture_player.CapturePlayerViewFactory;
 import com.meey.insta.insta.text_view.TextViewFactory;
 import com.meey.insta.insta.util.AssetsUtil;
 import com.meey.insta.insta.util.CameraBindNetworkManager;
@@ -79,13 +80,13 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
     channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "insta");
     // Register text view
     flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.meey.insta/textview", new TextViewFactory(flutterPluginBinding.getBinaryMessenger()));
+    flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.meey.insta/capture_player_view", new CapturePlayerViewFactory(flutterPluginBinding.getBinaryMessenger()));
 
     channel.setMethodCallHandler(this);
 
     ICameraChangedCallback cameraCallback = new CameraChangedCallback(new CameraListenerCallback () {
       @Override
       public void onCameraStatusChanged(boolean enabled) {
-        Log.d("Log===", "onCameraStatusChanged");
         if(!enabled){
           CameraBindNetworkManager.getInstance().unbindNetwork();
           NetworkManager.getInstance().clearBindProcess();
@@ -95,20 +96,16 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
 
       @Override
       public void onCameraConnectError(int errorCode) {
-        Log.d("Log===", "onCameraConnectError" + errorCode + channel);
         CameraBindNetworkManager.getInstance().unbindNetwork();
         channel.invokeMethod("camera_connect_error", errorCode);
       }
 
       @Override
       public void onCameraSDCardStateChanged(boolean enabled){
-        Log.d("Log===", "onCameraSDCardStateChanged");
         channel.invokeMethod("camera_sdcard_state_change", enabled);
       }
     });
     InstaCameraManager.getInstance().registerCameraChangedCallback(cameraCallback);
-
-//    copyHdrSourceFromAssets();
   }
 
 
@@ -179,17 +176,6 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
     }
   }
 
-  private void copyHdrSourceFromAssets() {
-    File dirHdr = new File(StitchActivity.HDR_COPY_DIR);
-    if (!dirHdr.exists()) {
-      AssetsUtil.copyFilesFromAssets(activity, "hdr_source", dirHdr.getAbsolutePath());
-    }
-
-    File dirPureShot = new File(StitchActivity.PURE_SHOT_COPY_DIR);
-    if (!dirPureShot.exists()) {
-      AssetsUtil.copyFilesFromAssets(activity, "pure_shot_source", dirPureShot.getAbsolutePath());
-    }
-  }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
@@ -199,7 +185,6 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     activity = binding.getActivity();
-//    binding.getLifecycle()
   }
 
   @Override
@@ -214,7 +199,7 @@ public class InstaPlugin extends Application implements FlutterPlugin, MethodCal
 
   @Override
   public void onDetachedFromActivity() {
-
+    Log.d("log---", "onDetachedFromActivity");
   }
 
 

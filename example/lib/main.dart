@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:insta/capture_player.dart';
 import 'package:insta/insta.dart';
 import 'package:insta/insta_listener_model.dart';
 import 'package:insta/text_view.dart';
+import 'package:insta_example/preview.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,6 +19,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      builder: EasyLoading.init(),
+      home: const MyHome(),
+    );
+  }
+}
+
+class MyHome extends StatefulWidget {
+  const MyHome({Key? key}) : super(key: key);
+
+  @override
+  State<MyHome> createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> {
   bool isCameraConnected = false;
   final _instaPlugin = Insta();
 
@@ -110,68 +127,73 @@ class _MyAppState extends State<MyApp> {
     controller.setText('Hello from Android!');
   }
 
+  void _navToPreview(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Preview()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      builder: EasyLoading.init(),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            ElevatedButton(onPressed: getFullDemo, child: const Text("Full Demo")),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: connectByWifi,
-                    child: const Text("Connect by Wifi"),
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          ElevatedButton(onPressed: getFullDemo, child: const Text("Full Demo")),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: connectByWifi,
+                  child: const Text("Connect by Wifi"),
                 ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: connectByUsb,
-                    child: const Text("Connect by USB"),
-                  ),
-                ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: connectByBle,
-                    child: const Text("Connect by BLE"),
-                  ),
-                ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: closeCamera,
-                    child: const Text("Disconnect"),
-                  ),
-                ),
-              ],
-            ),
-            const Text("Camera Function -- Need to connect camere first"),
-            ElevatedButton(onPressed: isCameraConnected ? capture : null, child: const Text("Capture")),
-            ElevatedButton(onPressed: isCameraConnected ? getPreview : null, child: const Text("Preview")),
-            ElevatedButton(onPressed: isCameraConnected ? getPreview2 : null, child: const Text("Preview 2")),
-            ElevatedButton(onPressed: isCameraConnected ? getPreview3 : null, child: const Text("Preview 3")),
-            ElevatedButton(onPressed: isCameraConnected ? getLive : null, child: const Text("Live")),
-            ElevatedButton(onPressed: isCameraConnected ? getOsc : null, child: const Text("OSC")),
-            ElevatedButton(onPressed: isCameraConnected ? getSetting : null, child: const Text("Settings")),
-            const Text("Other"),
-            ElevatedButton(onPressed: () {}, child: const Text("Camera file list")),
-            ElevatedButton(onPressed: () {}, child: const Text("Play & Export")),
-            ElevatedButton(onPressed: () {}, child: const Text("HDR stitching")),
-            ElevatedButton(onPressed: () {}, child: const Text("Firmware upgrade")),
-            SizedBox(
-              height: 100,
-              width: double.infinity,
-              child: TextView(
-                onTextViewCreated: _onTextViewCreated,
               ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: connectByUsb,
+                  child: const Text("Connect by USB"),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: connectByBle,
+                  child: const Text("Connect by BLE"),
+                ),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: closeCamera,
+                  child: const Text("Disconnect"),
+                ),
+              ),
+            ],
+          ),
+          const Text("Camera Function -- Need to connect camere first"),
+          ElevatedButton(onPressed: isCameraConnected ? capture : null, child: const Text("Capture")),
+          ElevatedButton(onPressed: isCameraConnected ? getPreview : null, child: const Text("Preview")),
+          ElevatedButton(onPressed: isCameraConnected ? getPreview2 : null, child: const Text("Preview 2")),
+          ElevatedButton(onPressed: isCameraConnected ? getPreview3 : null, child: const Text("Preview 3")),
+          ElevatedButton(onPressed: isCameraConnected ? getLive : null, child: const Text("Live")),
+          ElevatedButton(onPressed: isCameraConnected ? getOsc : null, child: const Text("OSC")),
+          ElevatedButton(onPressed: isCameraConnected ? getSetting : null, child: const Text("Settings")),
+          const Text("Other"),
+          ElevatedButton(onPressed: () {}, child: const Text("Camera file list")),
+          ElevatedButton(onPressed: () {}, child: const Text("Play & Export")),
+          ElevatedButton(onPressed: () {}, child: const Text("HDR stitching")),
+          ElevatedButton(onPressed: () {}, child: const Text("Firmware upgrade")),
+          ElevatedButton(onPressed: () => _navToPreview(context), child: const Text("Test Preview")),
+          SizedBox(
+            height: 100,
+            width: double.infinity,
+            child: TextView(
+              onTextViewCreated: _onTextViewCreated,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
