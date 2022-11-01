@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 typedef CapturePlayerCreatedCallback = void Function(CapturePlayerController controller);
@@ -20,11 +22,40 @@ class CapturePlayer extends StatefulWidget {
 class _CapturePlayerState extends State<CapturePlayer> {
   @override
   Widget build(BuildContext context) {
+    const String viewType = 'plugins.meey.insta/capture_player_view';
+    // Pass parameters to the platform side.
+    const Map<String, dynamic> creationParams = <String, dynamic>{};
+
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return AndroidView(
-        viewType: 'plugins.meey.insta/capture_player_view',
-        onPlatformViewCreated: _onPlatformViewCreated,
+      return PlatformViewLink(
+        viewType: viewType,
+        surfaceFactory: (context, controller) {
+          return AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          );
+        },
+        onCreatePlatformView: (params) {
+          _onPlatformViewCreated(params.id);
+          return PlatformViewsService.initExpensiveAndroidView(
+            id: params.id,
+            viewType: viewType,
+            layoutDirection: TextDirection.ltr,
+            creationParams: creationParams,
+            creationParamsCodec: const StandardMessageCodec(),
+            onFocus: () {
+              params.onFocusChanged(true);
+            },
+          )
+            ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+            ..create();
+        },
       );
+      // return AndroidView(
+      //   viewType: viewType,
+      //   onPlatformViewCreated: _onPlatformViewCreated,
+      // );
     }
     return Text('$defaultTargetPlatform is not yet supported by the capture_player_view plugin');
   }

@@ -130,7 +130,7 @@ class _MyHomeState extends State<MyHome> {
   void _navToPreview(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Preview()),
+      MaterialPageRoute(builder: (context) => const LoadingPage()),
     );
   }
 
@@ -185,7 +185,7 @@ class _MyHomeState extends State<MyHome> {
           ElevatedButton(onPressed: () {}, child: const Text("Play & Export")),
           ElevatedButton(onPressed: () {}, child: const Text("HDR stitching")),
           ElevatedButton(onPressed: () {}, child: const Text("Firmware upgrade")),
-          ElevatedButton(onPressed: () => _navToPreview(context), child: const Text("Test Preview")),
+          ElevatedButton(onPressed: () => _navToPreview(context), child: const Text("Camera Preview")),
           SizedBox(
             height: 100,
             width: double.infinity,
@@ -195,6 +195,43 @@ class _MyHomeState extends State<MyHome> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class LoadingPage extends StatefulWidget {
+  const LoadingPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoadingPage> createState() => _LoadingPageState();
+}
+
+class _LoadingPageState extends State<LoadingPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const Preview()),
+      // );
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const Preview(),
+          transitionDuration: Duration.zero,
+          transitionsBuilder: (_, a, __, c) => FadeTransition(opacity: a, child: c),
+        ),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: Colors.white,
     );
   }
 }

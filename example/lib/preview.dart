@@ -14,7 +14,9 @@ class _PreviewState extends State<Preview> {
 
   void _onCapturePlayerCreated(CapturePlayerController controller) {
     _controller = controller;
-    controller.onInit();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _controller.onInit();
+    });
   }
 
   void onStart() {
@@ -37,29 +39,39 @@ class _PreviewState extends State<Preview> {
     super.dispose();
   }
 
+  Future<bool> _onWillPop() {
+    int count = 0;
+    Navigator.of(context).popUntil((_) => count++ >= 2);
+    return Future(() => false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 500,
-            child: CapturePlayer(
-              onCapturePlayerCreated: _onCapturePlayerCreated,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.white,
+              child: CapturePlayer(
+                onCapturePlayerCreated: _onCapturePlayerCreated,
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            child: ElevatedButton(
-              onPressed: isStarted ? onStop : onStart,
-              child: Text(isStarted ? "Stop" : "Start"),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              child: ElevatedButton(
+                onPressed: isStarted ? onStop : onStart,
+                child: Text(isStarted ? "Stop" : "Start"),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
